@@ -35,7 +35,8 @@ PYTORCH_MAJOR_VERSION = int(torch.__version__.split('.')[0])
 
 def parse_option():
     parser = argparse.ArgumentParser('Swin Transformer training and evaluation script', add_help=False)
-    parser.add_argument('--cfg', type=str, required=True, metavar="FILE", help='path to config file', )
+    parser.add_argument('--cfg', default='configs/swin/swin_small_rf.yaml', 
+                        type=str, required=True, metavar="FILE", help='path to config file', )
     parser.add_argument(
         "--opts",
         help="Modify config options by adding 'KEY VALUE' pairs. ",

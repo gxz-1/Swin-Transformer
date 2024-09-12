@@ -264,6 +264,8 @@ _C.LOCAL_RANK = 0
 _C.FUSED_WINDOW_PROCESS = False
 _C.FUSED_LAYERNORM = False
 
+_C.SNR = CN()
+_C.SNR.VAL_DB = 8  # 默认 SNR 值，单位 dB
 
 def _update_config_from_file(config, cfg_file):
     config.defrost()
@@ -343,6 +345,9 @@ def update_config(config, args):
     else:
         config.LOCAL_RANK = int(os.environ['LOCAL_RANK'])
 
+    if _check_args('snr_val_db'):
+        config.SNR.VAL_DB = args.snr_val_db  # 新增：支持通过命令行修改 SNR.VAL_DB
+
     # output folder
     config.OUTPUT = os.path.join(config.OUTPUT, config.MODEL.NAME, config.TAG)
 
@@ -357,3 +362,5 @@ def get_config(args):
     update_config(config, args)
 
     return config
+
+

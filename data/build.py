@@ -14,6 +14,8 @@ from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.data import Mixup
 from timm.data import create_transform
 
+from .rf_dataset  import RFDataset
+
 from .cached_image_folder import CachedImageFolder
 from .imagenet22k_dataset import IN22KDATASET
 from .samplers import SubsetRandomSampler
@@ -44,10 +46,10 @@ except:
 def build_loader(config):
     config.defrost()
     dataset_train, config.MODEL.NUM_CLASSES = build_dataset(is_train=True, config=config)
-    config.freeze()
     print(f"local rank {config.LOCAL_RANK} / global rank {dist.get_rank()} successfully build train dataset")
     dataset_val, _ = build_dataset(is_train=False, config=config)
     print(f"local rank {config.LOCAL_RANK} / global rank {dist.get_rank()} successfully build val dataset")
+    config.freeze()
 
     num_tasks = dist.get_world_size()
     global_rank = dist.get_rank()
@@ -116,9 +118,17 @@ def build_dataset(is_train, config):
             ann_file = prefix + "_map_val.txt"
         dataset = IN22KDATASET(config.DATA.DATA_PATH, ann_file, transform)
         nb_classes = 21841
+    elif config.DATA.DATASET == 'rf':
+        # 新增：指定自定义数据集的根目录
+        dataset_root = config.DATA.DATA_PATH  
+        if is_train:
+            dataset_dir = os.path.join(dataset_root, 'train') 
+        else:
+            dataset_dir = os.path.join(dataset_root, 'val',f'snr_{config.SNR.VAL_DB}') 
+        dataset = RFDataset(data_dir=dataset_dir, transform=transform)  # 加载自定义数据集，使用 ImageFolder
+        nb_classes = len(dataset.samples)  # 新增：获取类别数并返回
     else:
         raise NotImplementedError("We only support ImageNet Now.")
-
     return dataset, nb_classes
 
 

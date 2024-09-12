@@ -80,7 +80,7 @@ load data:
       │   ├── img6.jpeg
       │   └── ...
       └── ...
- 
+   
   ```
 - To boost the slow speed when reading images from massive small files, we also support zipped ImageNet, which includes
   four files:
@@ -144,6 +144,14 @@ For example, to evaluate the `Swin-B` with a single GPU:
 ```bash
 python -m torch.distributed.launch --nproc_per_node 1 --master_port 12345 main.py --eval \
 --cfg configs/swin/swin_base_patch4_window7_224.yaml --resume swin_base_patch4_window7_224.pth --data-path <imagenet-path>
+```
+
+在表格中找到预训练模型swin_base_patch4_window7_224.pth和对应的config文件swin_base_patch4_window7_224.yaml
+
+验证代码示例：
+```bash
+python -m torch.distributed.launch --nproc_per_node 2 --master_port 12345 main.py --eval \
+--cfg configs/swin/swin_base_patch4_window7_224.yaml --resume swin_base_patch4_window7_224.pth --data-path /disk/datasets/imageNet/
 ```
 
 ### Training from scratch on ImageNet-1K

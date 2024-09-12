@@ -1,0 +1,22 @@
+MODEL:
+  TYPE: swin
+  NAME: swin_small_rf
+  DROP_PATH_RATE: 0.3
+  SWIN:
+    EMBED_DIM: 96
+    DEPTHS: [ 2, 2, 18, 2 ]
+    NUM_HEADS: [ 3, 6, 12, 24 ]
+    WINDOW_SIZE: 7
+    IN_CHANS: 1 #将通道数3改为1
+
+DATA:
+  DATASET: rf
+
+SAVE_FREQ: 4 #每训练5轮保存一次
+
+TRAIN:
+  EPOCHS: 90
+  WARMUP_EPOCHS: 5
+
+SNR:
+  VAL_DB: 8
