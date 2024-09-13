@@ -20,4 +20,4 @@ TRAIN:
   WARMUP_EPOCHS: 5
 
 SNR:
-  VAL_DB: 8
+  VAL_DB: -10

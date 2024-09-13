@@ -17,7 +17,12 @@ python -m torch.distributed.launch --nproc_per_node 2 --master_port 12345 main.p
 
 swin_base_rf 
 ```bash
-python -m torch.distributed.launch --nproc_per_node 2 --master_port 12345 main.py --eval \
+python -m torch.distributed.launch --nproc_per_node 2 --master_port 1245 main.py --eval \
 --cfg configs/swin/swin_base_rf.yaml --resume output/swin_base_rf/minmax/ckpt_epoch_52.pth --data-path /disk/datasets/rf_data/train_data/time_frequency
 ```
 
+swin_small_rf  
+```bash
+python -m torch.distributed.launch --nproc_per_node 2 --master_port 1235 main.py --eval \
+--cfg configs/swin/swin_small_rf.yaml --resume output/swin_small_rf/minmax/ckpt_epoch_52.pth --data-path /disk/datasets/rf_data/train_data/time_frequency
+```
