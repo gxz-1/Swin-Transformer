@@ -10,7 +10,7 @@ MODEL:
     WINDOW_SIZE: 7
     IN_CHANS: 1 #将通道数3改为1
 
-
+TAG: minmax #输出文件夹名称
 DATA:
   DATASET: rf
 
@@ -21,4 +21,5 @@ TRAIN:
   WARMUP_EPOCHS: 10
 
 SNR:
-  VAL_DB: 8
+  VAL_DB: -9 #这里指定不同信噪比的测试数据
+PRINT_FREQ: 10

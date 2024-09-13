@@ -9,6 +9,7 @@ MODEL:
     WINDOW_SIZE: 7
     IN_CHANS: 1 #将通道数3改为1
 
+TAG: minmax #输出文件夹名称
 DATA:
   DATASET: rf
 
