@@ -124,6 +124,7 @@ def build_dataset(is_train, config):
         if is_train:
             dataset_dir = os.path.join(dataset_root, 'train') 
         else:
+            # dataset_dir = os.path.join(dataset_root, 'random') 
             dataset_dir = os.path.join(dataset_root, 'val',f'snr_{config.SNR.VAL_DB}') 
         dataset = RFDataset(data_dir=dataset_dir, transform=transform)  # 加载自定义数据集，使用 ImageFolder
         nb_classes = len(dataset.samples)  # 新增：获取类别数并返回
