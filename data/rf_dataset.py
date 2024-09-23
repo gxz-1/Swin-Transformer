@@ -86,7 +86,7 @@ class RFDataset(Dataset):
 
         # 根据模型的需要对 Pxx 进行处理，例如将其形状调整为适合输入模型的格式
         self.transform = transforms.Compose([
-            EnergyToTensor(normalization='log-symmetric',augment=False)  # 可以选择log或minmax
+            EnergyToTensor(normalization='minmax',augment=False)  # 可以选择log或minmax
         ])
         if self.transform:
             Pxx = self.transform(Pxx)

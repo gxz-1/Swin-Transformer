@@ -29,6 +29,10 @@ from logger import create_logger
 from utils import load_checkpoint, load_pretrained, save_checkpoint, NativeScalerWithGradNormCount, auto_resume_helper, \
     reduce_tensor
 
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 # pytorch major version (1.x or 2.x)
 PYTORCH_MAJOR_VERSION = int(torch.__version__.split('.')[0])
 
@@ -242,6 +246,9 @@ def validate(config, data_loader, model):
     acc1_meter = AverageMeter()
     acc5_meter = AverageMeter()
 
+    all_targets = []
+    all_predictions = []
+
     end = time.time()
     for idx, (images, target) in enumerate(data_loader):
         images = images.cuda(non_blocking=True)
@@ -254,6 +261,12 @@ def validate(config, data_loader, model):
         # measure accuracy and record loss
         loss = criterion(output, target)
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
+
+        # get predictions (argmax across the class dimension)
+        predictions = torch.argmax(output, dim=1)
+        # collect predictions and targets for confusion matrix
+        all_targets.extend(target.cpu().numpy())
+        all_predictions.extend(predictions.cpu().numpy())
 
         acc1 = reduce_tensor(acc1)
         acc5 = reduce_tensor(acc5)
@@ -276,8 +289,38 @@ def validate(config, data_loader, model):
                 f'Acc@1 {acc1_meter.val:.3f} ({acc1_meter.avg:.3f})\t'
                 f'Acc@5 {acc5_meter.val:.3f} ({acc5_meter.avg:.3f})\t'
                 f'Mem {memory_used:.0f}MB')
+
+    # Generate confusion matrix
+    cm = confusion_matrix(all_targets, all_predictions, labels=np.arange(4))  # Assuming 4 classes
+    # Plot confusion matrix
+    plot_confusion_matrix(cm, class_names=['device 4', 'device 5', 'device 6', 'device 7'],save_path=config.OUTPUT+'/confusion_matrix.png')
+    
     logger.info(f' * Acc@1 {acc1_meter.avg:.3f} Acc@5 {acc5_meter.avg:.3f}')
     return acc1_meter.avg, acc5_meter.avg, loss_meter.avg
+
+def plot_confusion_matrix(cm, class_names, save_path='confusion_matrix.png'):
+    """
+    Plots the confusion matrix using seaborn's heatmap and saves it as a file.
+    
+    Args:
+    - cm: Confusion matrix (numpy array)
+    - class_names: List of class names (list of strings)
+    - save_path: Path to save the confusion matrix image (string)
+    """
+    plt.figure(figsize=(8, 6))
+    sns.set(font_scale=1.2)  # Adjust to fit font size in the plot
+
+    # Plot heatmap with annotations
+    sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', cbar=True, xticklabels=class_names, yticklabels=class_names)
+    
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted Labels')
+    plt.ylabel('True Labels')
+    plt.tight_layout()
+
+    # Save the plot as a file
+    plt.savefig(save_path)
+    plt.close()  # Close the plot to free memory
 
 
 @torch.no_grad()

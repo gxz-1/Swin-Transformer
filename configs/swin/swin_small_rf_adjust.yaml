@@ -9,8 +9,8 @@ MODEL:
     WINDOW_SIZE: 7
     IN_CHANS: 1 #将通道数3改为1
 
-# EnergyToTensor(normalization='zscore',augment=True) 
-TAG: log-symmetric #输出文件夹名称
+# EnergyToTensor(normalization='mean',augment=False) 
+TAG: mean #输出文件夹名称
 DATA:
   DATASET: rf
 
